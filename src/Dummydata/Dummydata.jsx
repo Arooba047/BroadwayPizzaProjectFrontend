@@ -121,3 +121,7 @@
       "price" : "650"
     }
   ]
+
+
+  // need to add this data in a database model
+  

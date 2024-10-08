@@ -1,156 +1,240 @@
 import React, { useState } from 'react';
 import './Form.css';
+import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Userdata from '../Userdata/Userdata';
 import Logo from '../../Logo/Logo';
 import Navbar from '../../Navbar/Navbar';
 
-export default function Form({text}) {
-  const [formdata, setformdata] = useState({
-    uemail: '',
-    upassword: '',
-    uphone: '',
-    index: '',
-  });
 
-  const [userdata, newuserdata] = useState([]);
+const LoginOrRegister = () => {
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [password, setPassword] = useState('');
+  const [isRegistering, setIsRegistering] = useState(false); // Toggle between login and register
+  const [error, setError] = useState('');
 
-  function setData(e) {
-    let data = { ...formdata };
-    let inputname = e.target.name;
-    let inputvalue = e.target.value;
-    data[inputname] = inputvalue;
-    setformdata(data);
-  }
-
-  function submitfunc(e) {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (formdata.uemail === '' || formdata.upassword === '' || formdata.uphone === '') {
-      toast.info('Please fill all the entries');
-      return;
-    }
-    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    if (!emailPattern.test(formdata.uemail)) {
-      toast.info("Email must contain letters, an '@' symbol, and a valid domain (e.g., '.com').");
-      return;
-    }
-    const phonePattern = /^\d+$/;
-  if (!phonePattern.test(formdata.uphone)) {
-    toast.info('Phone number must contain only numbers.');
-    return;
-  }
     
-    toast.success('Form is Submitted')
-    if (formdata.index === '') {
-      let checkdata = userdata.filter(v => v.uemail === formdata.uemail && v.uphone === formdata.uphone);
-      if (checkdata.length === 1) {
-        toast.info('Entry already exists');
-      } else {
-        let olddata = {
-          uemail: formdata.uemail,
-          upassword: formdata.upassword,
-          uphone: formdata.uphone,
-        };
-        newuserdata([...userdata, olddata]);
-        setformdata({
-          uemail: '',
-          upassword: '',
-          uphone: '',
-          index: '',
-        });
-      }
-    } else {
-      let formindex = formdata.index;
-      let olddata = [...userdata];
-      let checkdata = userdata.filter((v, i) => (v.uemail === formdata.uemail || v.uphone === formdata.uphone) && i !== formindex);
+    // Define the data payload for both login and registration
+    const userData = {
+      email,
+      phone,
+      password,
+    };
 
-      if (checkdata.length === 0) {
-        olddata[formindex].uemail = formdata.uemail;
-        olddata[formindex].upassword = formdata.upassword;
-        olddata[formindex].uphone = formdata.uphone;
-        newuserdata(olddata);
-        setformdata({
-          uemail: '',
-          upassword: '',
-          uphone: '',
-          index: '',
-        });
+    try {
+      if (isRegistering) {
+        // Handle Registration
+        const response = await axios.post('http://127.0.0.1:8000/api/register/', userData);
+        toast.success('Registration successful!');
+        console.log(response.data);
+        
       } else {
-        toast.info('Entry already exists');
+        // Handle Login
+        const response = await axios.post('http://127.0.0.1:8000/api/login/', {
+          email,
+          password,
+        });
+        localStorage.setItem('access_token', response.data.access);
+        toast.success('Login successful!');
+        localStorage.setItem('access_token', response.data.access);
+        localStorage.setItem('login_state', 'true'); 
+        console.log(response.data);
+        window.location.href = '/'
+        
+        
       }
+    } catch (error) {
+      console.error('Error:', error.response);
+      setError('An error occurred during the process. Please try again.');
     }
-  }
-
-  function deleterow(index) {
-    let deletedata = userdata.filter((v, i) => i !== index);
-    newuserdata(deletedata);
-    toast.success('Row deleted successfully');
-  }
-
-  function updaterow(index) {
-    let updatedata = userdata[index];
-    setformdata({ ...updatedata, index });
-  }
+  };
 
   return (
-    <>
     <div className="container-fluid">
-    <div className="row">
-    <div className="col-1" >
-    <Navbar />
-    </div>
-    <div className="col-11">
-    <Logo/>
-      <ToastContainer />
-      <div className="container">
-        <div className="d-flex align-items-center flex-column justify-content-center vh-100">
-          <div className="col-6">
-            <form className='formbg border shadow p-4'>
-              <h3>{text || 'Your Account'}</h3>
-              <div className="form-group">
-                <label htmlFor="uemail">Email:</label>
-                <input type="email" className="form-control" id="email" placeholder="Enter email" value={formdata.uemail} name="uemail" onChange={setData} required />
+      <div className="row">
+        <div className="col-1">
+          <Navbar />
+        </div>
+        <div className="col-11">
+          <Logo />
+          <ToastContainer />
+          <div className="container">
+            <div className="d-flex align-items-center flex-column justify-content-center vh-100">
+              <div className="col-6">
+                <form className="formbg border shadow p-4" onSubmit={handleSubmit}>
+                  <h3>{isRegistering ? 'User Registration' : 'User Login Account'}</h3>
+                  <div className="form-group">
+                    <label htmlFor="uemail">Email:</label>
+                    <input
+                      type="email"
+                      className="form-control"
+                      id="email"
+                      placeholder="Enter email"
+                      value={email}
+                      name="uemail"
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                    />
+                  </div>
+                  {isRegistering && (
+                    <div className="form-group">
+                      <label htmlFor="uphone">Phone:</label>
+                      <input
+                        type="tel"
+                        className="form-control"
+                        id="phone"
+                        placeholder="Enter phone number"
+                        value={phone}
+                        name="uphone"
+                        onChange={(e) => setPhone(e.target.value)}
+                      />
+                    </div>
+                  )}
+                  <div className="form-group">
+                    <label htmlFor="upassword">Password:</label>
+                    <input
+                      type="password"
+                      className="form-control"
+                      id="password"
+                      placeholder="Enter password"
+                      value={password}
+                      name="upassword"
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                    />
+                  </div>
+                  <button type="submit" className="btn btn-warning my-2">
+                    {isRegistering ? 'Register' : 'Login'}
+                  </button>
+                  <p>
+                    {isRegistering ? 'Already have an account?' : "Don't have an account?"}
+                    <button
+                      type="button"
+                      className="btn btn-link"
+                      onClick={() => setIsRegistering(!isRegistering)}
+                    >
+                      {isRegistering ? 'Login here' : 'Register here'}
+                    </button>
+                  </p>
+                  {error && <p>{error}</p>}
+                </form>
               </div>
-              <div className="form-group">
-                <label htmlFor="uphone">Phone:</label>
-                <input type="tel" className="form-control" id="phone" placeholder="Enter phone number" value={formdata.uphone} name="uphone" onChange={setData} />
-              </div>
-              <div className="form-group">
-                <label htmlFor="upassword">Password:</label>
-                <input type="password" className="form-control" id="password" placeholder="Enter password" value={formdata.upassword} name="upassword" onChange={setData} />
-              </div>
-              <button type="submit" className="btn btn-warning my-2" onClick={submitfunc}>Submit</button>
-            </form>
+            </div>
           </div>
         </div>
       </div>
-
-      <div className="container">
-        {
-          userdata.length >= 1 ? 
-            userdata.map((v, i) => {
-              return (
-                <Userdata 
-                  key={i} 
-                  uemail={v.uemail} 
-                  uphone={v.uphone} 
-                  upassword={v.upassword} 
-                  updaterow={() => updaterow(i)} 
-                  deleterow={() => deleterow(i)} 
-                />
-              );
-            })
-          :
-          'No data found'
-        }
-      </div>
-      </div>
-      </div>
-      </div>
-    </>
+    </div>
   );
-}
+};
+
+export default LoginOrRegister;
+
+
+// const Login = () => {
+//   const [email, setEmail] = useState('');
+//   const [phone, setPhone] = useState('');
+//   const [password, setPassword] = useState('');
+//   const [error, setError] = useState('');
+
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
+    
+//     try {
+//       const response = await axios.post('http://localhost:8000/api/login/', {
+//         email,
+//         phone,
+//         password,
+//       });
+//       // Save JWT tokens in local storage
+//       localStorage.setItem('access_token', response.data.access);
+//       localStorage.setItem('refresh_token', response.data.refresh);
+      
+//       // Redirect or perform other actions
+//       console.log('Login successful!');
+//     } catch (error) {
+//       setError('Invalid login credentials');
+//     }
+//   };
+//   return (
+//     <>
+//     <div className="container-fluid">
+//     <div className="row">
+//     <div className="col-1" >
+//     <Navbar />
+//     </div>
+//     <div className="col-11">
+//     <Logo/>
+//       <ToastContainer />
+//       <div className="container">
+//         <div className="d-flex align-items-center flex-column justify-content-center vh-100">
+//           <div className="col-6">
+//             <form className='formbg border shadow p-4' onSubmit={handleSubmit}>
+//               <h3>'User Login Account'</h3>
+//               <div className="form-group">
+//                 <label htmlFor="uemail">Email:</label>
+//                 <input type="email" className="form-control" id="email" placeholder="Enter email" value={email} name="uemail" oonChange={(e) => setEmail(e.target.value)} required />
+//               </div>
+//               <div className="form-group">
+//                 <label htmlFor="uphone">Phone:</label>
+//                 <input type="tel" className="form-control" id="phone" placeholder="Enter phone number" value={phone} name="uphone"   onChange={(e) => setPhone(e.target.value)} />
+//               </div>
+//               <div className="form-group">
+//                 <label htmlFor="upassword">Password:</label>
+//                 <input type="password" className="form-control" id="password" placeholder="Enter password" value={password} name="upassword" onChange={(e) => setPassword(e.target.value)} />
+//               </div>
+//               <button type="submit" className="btn btn-warning my-2">Submit</button>
+//               {error && <p>{error}</p>}
+//             </form>
+//           </div>
+//         </div>
+//       </div>
+
+//       {/* <div className="container">
+//         {
+//           userdata.length >= 1 ? 
+//             userdata.map((v, i) => {
+//               return (
+//                 <Userdata 
+//                   key={i} 
+//                   uemail={v.uemail} 
+//                   uphone={v.uphone} 
+//                   upassword={v.upassword} 
+//                   updaterow={() => updaterow(i)} 
+//                   deleterow={() => deleterow(i)} 
+//                 />
+//               );
+//             })
+//           :
+//           'No data found'
+//         }
+//       </div> */}
+//       </div>
+//       </div>
+//       </div>
+//     </>
+//   );
+// }
+// export default Login;
+
+
+const token = localStorage.getItem('access_token');
+
+axios.get('http://localhost:8000/api/protected/', {
+  headers: {
+    'Authorization': `Bearer ${token}`
+  }
+})
+.then(response => {
+  console.log(response.data);
+})
+.catch(error => {
+  console.error('Error fetching protected resource', error);
+});
+
 
 
 

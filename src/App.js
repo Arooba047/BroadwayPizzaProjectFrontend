@@ -7,6 +7,7 @@ import Card from './Card/Card';
 import Button from './Buttons/Button';
 import NavbarSlider from './NavbarSlider/NavbarSlider';
 import LoginForm from './Login Form/LoginForm';
+import axios from 'axios';
 
 function App() {
   const [showform, setShowForm] = useState(false);

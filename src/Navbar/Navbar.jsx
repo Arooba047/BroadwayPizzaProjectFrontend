@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState} from 'react';
 import homeIcon from '../images/home_24dp_FFC714_FILL0_wght400_GRAD0_opsz24.svg';
 import menuIcon from '../images/menu.svg';
 import cartIcon from '../images/cart.svg';
@@ -11,6 +11,7 @@ import NavbarSlider from '../NavbarSlider/NavbarSlider';
 
 export default function Navbar() {
   const [showSlider, setShowSlider] = useState(false);
+
 
   return (
     <>

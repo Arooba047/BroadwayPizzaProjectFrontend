@@ -16,6 +16,7 @@ import Corporate from './SubComponents/Corporate/Corporate'
 import Contact  from './SubComponents/Contact/Contact';
 import Content from './SubComponents/Content/Content';
 import Location from './SubComponents/Location/Location'
+import axios from 'axios';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
