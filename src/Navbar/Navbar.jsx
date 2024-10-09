@@ -1,4 +1,4 @@
-import React, { useState} from 'react';
+import React, { useState, useEffect} from 'react';
 import homeIcon from '../images/home_24dp_FFC714_FILL0_wght400_GRAD0_opsz24.svg';
 import menuIcon from '../images/menu.svg';
 import cartIcon from '../images/cart.svg';
@@ -44,8 +44,8 @@ export default function Navbar() {
               <p className='navbartxt'>Location</p> </Link>
             </li>
             <li className='mb-2'>
-            <Link to='/form'><img src={profileIcon} className="icon" alt="icon 5" />
-              <p className='navbartxt'>Profile</p> </Link>
+              <Link to='/form'><img src={profileIcon} className="icon" alt="icon 5" />
+              <p className='navbartxt'>Profile</p> </Link>            
             </li>
           </ul>
         </div>

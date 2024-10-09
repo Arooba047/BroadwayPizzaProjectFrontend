@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Form.css';
 import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
@@ -14,6 +14,14 @@ const LoginOrRegister = () => {
   const [password, setPassword] = useState('');
   const [isRegistering, setIsRegistering] = useState(false); // Toggle between login and register
   const [error, setError] = useState('');
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    const loginState = localStorage.getItem('login_state');
+    if (loginState === 'true') {
+      setIsAuthenticated(true);
+    }
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -46,12 +54,21 @@ const LoginOrRegister = () => {
         window.location.href = '/'
         
         
+        
       }
     } catch (error) {
       console.error('Error:', error.response);
       setError('An error occurred during the process. Please try again.');
     }
   };
+// Logout Function
+  const handleLogout = () => {
+  localStorage.removeItem('access_token');
+  localStorage.removeItem('login_state');
+  setIsAuthenticated(false); // Update the state to false
+  toast.info('Logged out successfully!');
+  window.location.href = '/'; // Redirect to login page after logout
+};
 
   return (
     <div className="container-fluid">
@@ -65,6 +82,14 @@ const LoginOrRegister = () => {
           <div className="container">
             <div className="d-flex align-items-center flex-column justify-content-center vh-100">
               <div className="col-6">
+              {isAuthenticated ? (
+                  <div>
+                    <h3>You are logged in</h3>
+                    <button className="btn btn-warning my-2" onClick={handleLogout}>
+                      Logout
+                    </button>
+                  </div>
+                ) : (
                 <form className="formbg border shadow p-4" onSubmit={handleSubmit}>
                   <h3>{isRegistering ? 'User Registration' : 'User Login Account'}</h3>
                   <div className="form-group">
@@ -119,9 +144,11 @@ const LoginOrRegister = () => {
                     >
                       {isRegistering ? 'Login here' : 'Register here'}
                     </button>
+                    
                   </p>
                   {error && <p>{error}</p>}
                 </form>
+                )}
               </div>
             </div>
           </div>
@@ -134,91 +161,6 @@ const LoginOrRegister = () => {
 export default LoginOrRegister;
 
 
-// const Login = () => {
-//   const [email, setEmail] = useState('');
-//   const [phone, setPhone] = useState('');
-//   const [password, setPassword] = useState('');
-//   const [error, setError] = useState('');
-
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
-    
-//     try {
-//       const response = await axios.post('http://localhost:8000/api/login/', {
-//         email,
-//         phone,
-//         password,
-//       });
-//       // Save JWT tokens in local storage
-//       localStorage.setItem('access_token', response.data.access);
-//       localStorage.setItem('refresh_token', response.data.refresh);
-      
-//       // Redirect or perform other actions
-//       console.log('Login successful!');
-//     } catch (error) {
-//       setError('Invalid login credentials');
-//     }
-//   };
-//   return (
-//     <>
-//     <div className="container-fluid">
-//     <div className="row">
-//     <div className="col-1" >
-//     <Navbar />
-//     </div>
-//     <div className="col-11">
-//     <Logo/>
-//       <ToastContainer />
-//       <div className="container">
-//         <div className="d-flex align-items-center flex-column justify-content-center vh-100">
-//           <div className="col-6">
-//             <form className='formbg border shadow p-4' onSubmit={handleSubmit}>
-//               <h3>'User Login Account'</h3>
-//               <div className="form-group">
-//                 <label htmlFor="uemail">Email:</label>
-//                 <input type="email" className="form-control" id="email" placeholder="Enter email" value={email} name="uemail" oonChange={(e) => setEmail(e.target.value)} required />
-//               </div>
-//               <div className="form-group">
-//                 <label htmlFor="uphone">Phone:</label>
-//                 <input type="tel" className="form-control" id="phone" placeholder="Enter phone number" value={phone} name="uphone"   onChange={(e) => setPhone(e.target.value)} />
-//               </div>
-//               <div className="form-group">
-//                 <label htmlFor="upassword">Password:</label>
-//                 <input type="password" className="form-control" id="password" placeholder="Enter password" value={password} name="upassword" onChange={(e) => setPassword(e.target.value)} />
-//               </div>
-//               <button type="submit" className="btn btn-warning my-2">Submit</button>
-//               {error && <p>{error}</p>}
-//             </form>
-//           </div>
-//         </div>
-//       </div>
-
-//       {/* <div className="container">
-//         {
-//           userdata.length >= 1 ? 
-//             userdata.map((v, i) => {
-//               return (
-//                 <Userdata 
-//                   key={i} 
-//                   uemail={v.uemail} 
-//                   uphone={v.uphone} 
-//                   upassword={v.upassword} 
-//                   updaterow={() => updaterow(i)} 
-//                   deleterow={() => deleterow(i)} 
-//                 />
-//               );
-//             })
-//           :
-//           'No data found'
-//         }
-//       </div> */}
-//       </div>
-//       </div>
-//       </div>
-//     </>
-//   );
-// }
-// export default Login;
 
 
 const token = localStorage.getItem('access_token');
