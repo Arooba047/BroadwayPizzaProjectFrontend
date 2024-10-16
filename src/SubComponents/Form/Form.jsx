@@ -15,6 +15,7 @@ const LoginOrRegister = () => {
   const [isRegistering, setIsRegistering] = useState(false); // Toggle between login and register
   const [error, setError] = useState('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const storedItems = localStorage.getItem('cartitems');
 
   useEffect(() => {
     const loginState = localStorage.getItem('login_state');
@@ -53,6 +54,8 @@ const LoginOrRegister = () => {
         console.log(response.data);
         window.location.href = '/'
         
+
+        
         
         
       }
@@ -67,6 +70,7 @@ const LoginOrRegister = () => {
   localStorage.removeItem('login_state');
   setIsAuthenticated(false); // Update the state to false
   toast.info('Logged out successfully!');
+  localStorage.removeItem('cartitems');
   window.location.href = '/'; // Redirect to login page after logout
 };
 

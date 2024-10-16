@@ -12,9 +12,14 @@ export default function Cart() {
     return storedItems ? JSON.parse(storedItems) : [];
   });
 
+
+
   useEffect(() => {
     localStorage.setItem('cartitems', JSON.stringify(cartitems)); // Update localStorage whenever cartitems changes
   }, [cartitems]);
+
+
+
 
   const removeItem = (itemId) => {
     const updatedCartItems = cartitems.filter((v) => v.id !== itemId);
@@ -39,7 +44,17 @@ export default function Cart() {
     toast.info('Order Placed');
     // Optionally clear the cart after placing the order
     setCartItems([]);
+
+
+    // const loginState = localStorage.getItem('login_state');
+    // if(loginState == 'false'){
+    //   setCartItems();
+    // }
+      
   };
+
+
+
 
   return (
     <>
