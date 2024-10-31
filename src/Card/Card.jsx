@@ -1,15 +1,28 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import './Card.css';
-import { fooditems } from '../Dummydata/Dummydata';
+// import { fooditems } from '../Dummydata/Dummydata';
 import { toast, ToastContainer } from 'react-toastify';
 import axios from 'axios';
+// import { response } from 'express';
 
 
 
 // need to add CRUD Operations in menu card
 export default function Card({ activeitem }) {
   const activeRef = useRef(null);
+  const [menuItems, setMenuItems] = useState([]);
 
+
+  useEffect(() =>{
+    axios.get('http://127.0.0.1:8000/dashboard/menudisplay/')
+    .then(response => {
+      // console.log(response.data);
+      setMenuItems(response.data);
+    })
+    .catch(error => {
+      console.error("Error fetching menu items: ",error);
+    });
+  }, []);
   useEffect(() => {
     if (activeRef.current) {
       activeRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -25,7 +38,7 @@ export default function Card({ activeitem }) {
     const cartItems = JSON.parse(localStorage.getItem('cartitems')) || [];
     
     // Check if the item is already in the cart
-    const existingItem = cartItems.find((cartItem) => cartItem.id === item.id);
+    const existingItem = cartItems.find((cartItem) => cartItem.id === item.menu_id);
     
     if (existingItem) {
       // Increase quantity if the item already exists in the cart
@@ -53,7 +66,7 @@ export default function Card({ activeitem }) {
 // Need to add add menu card button
   return (
     <div className='row'>
-      {fooditems.map((v, i) => {
+      {menuItems.map((v, i) => {
         return (
           <div className="col-3" key={i}>
             <ChildCard value={v} isActive={v.id === activeitem} addToCart={addToCart} />
@@ -65,17 +78,17 @@ export default function Card({ activeitem }) {
   );
 }
 
-const ChildCard = React.forwardRef(({ value, isActive, addToCart }, ref) => {
+const ChildCard = React.forwardRef(({  value, isActive, addToCart }, ref) => {
   return (
     
     <div className={`cardrow my-2 p-2 ${isActive ? 'activecard' : ''}`} ref={ref}>
-      <img src={value.image} className="card-img rounded-1" alt={value.name} />
+      <img src={value.menu_image_url} className="card-img rounded-1" alt={value.menu_name} />
       <div className="d-flex justify-content-between my-3">
         <span className="card-text row1textbg">New!</span>
-        <span className="row1textbg2">Rs {value.price}</span>
+        <span className="row1textbg2">Rs {value.menu_price}</span>
       </div>
       <div className="d-flex justify-content-between align-items-center">
-        <p className="card-text">{value.name}</p>
+        <p className="card-text">{value.menu_name}</p>
         <button 
           className="btn btn-warning row1btn d-flex align-items-center rounded-circle"
           onClick={() => addToCart(value)} // Call addToCart when button is clicked
@@ -93,59 +106,7 @@ export { ChildCard };
 
 
 
-// import React, { useRef, useEffect } from 'react';
-// import './Card.css';
-// import { fooditems } from '../Dummydata/Dummydata';
-// import { Link } from 'react-router-dom';
-// import axios from 'axios';
-// import { toast } from 'react-toastify'; // Import toast for notifications
 
-// export default function Card({ activeitem }) {
-//   const activeRef = useRef(null);
-
-//   useEffect(() => {
-//     if (activeRef.current) {
-//       activeRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
-//     }
-//   }, [activeitem]);
-
-//   return (
-//     <>
-//       <div className='row'>
-//         {fooditems.map((v, i) => {
-//           return (
-//             <div className="col-3" key={i}>
-//               <ChildCard value={v} isActive={v.id === activeitem} ref={v.id === activeitem ? activeRef : null} />
-//             </div>
-//           );
-//         })}
-//       </div>
-//     </>
-//   );
-// }
-// const ChildCard = React.forwardRef(({ value, isActive, addToCart }, ref) => {
-//   return (
-//     <div className={`cardrow my-2 p-2 ${isActive ? 'activecard' : ''}`} ref={ref}>
-//       <img src={value.image} className="card-img rounded-1" alt={value.name} />
-//       <div className="d-flex justify-content-between my-3">
-//         <span className="card-text row1textbg">New!</span>
-//         <span className="row1textbg2">Rs {value.price}</span>
-//       </div>
-//       <div className="d-flex justify-content-between align-items-center">
-//         <p className="card-text">{value.name}</p>
-//         <button 
-//           className="btn btn-warning row1btn d-flex align-items-center rounded-circle"
-//           onClick={() => addToCart(value)} // Call addToCart when button is clicked
-//         >
-//           <span>+</span>
-//         </button>
-//       </div>
-//       <p className="row1text">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Autem totam voluptatem quasi.</p>
-//     </div>
-//   );
-// });
-
-// export { ChildCard };
 
 
 
