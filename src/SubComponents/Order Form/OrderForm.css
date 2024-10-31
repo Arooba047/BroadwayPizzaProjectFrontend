@@ -1,0 +1,19 @@
+form.formbg{
+    background-color: rgb(255, 252, 252);
+}
+
+.order-summary{
+    margin-top: 15px;
+}
+
+.item-detail{
+    display: inline-block;
+    width: 25%;
+    margin: 10px;
+    
+
+}
+.item-detail img{
+    width: 70px;
+    height: 80px;
+}

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import './Cart.css';
-import { fooditems } from '../../Dummydata/Dummydata';
 import Logo from '../../Logo/Logo';
 import Navbar from '../../Navbar/Navbar';
 import { toast, ToastContainer } from 'react-toastify';
@@ -40,18 +39,7 @@ export default function Cart() {
 
   const totalPrice = cartitems.reduce((acc, curr) => acc + curr.menu_price * curr.quantity, 0); // Calculate total price
 
-  const placeOrder = () => {
-    toast.info('Order Placed');
-    // Optionally clear the cart after placing the order
-    setCartItems([]);
 
-
-    // const loginState = localStorage.getItem('login_state');
-    // if(loginState == 'false'){
-    //   setCartItems();
-    // }
-      
-  };
 
 
 
@@ -96,7 +84,7 @@ export default function Cart() {
             {cartitems.length > 0 && (
               <div className="d-flex justify-content-center flex-column align-items-center">
                 <div className='my-2'>Total Price: {totalPrice} Rs</div>
-                <button className='btn btn-warning my-2' onClick={placeOrder}>Place Your Order</button>
+                <Link to={'/orderform'}><button className='btn btn-warning my-2' >Checkout</button></Link>
               </div>
             )}
           </div>

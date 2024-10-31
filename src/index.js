@@ -17,6 +17,7 @@ import Contact  from './SubComponents/Contact/Contact';
 import Content from './SubComponents/Content/Content';
 import Location from './SubComponents/Location/Location'
 import axios from 'axios';
+import OrderForm from './SubComponents/Order Form/OrderForm';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
@@ -62,6 +63,9 @@ let allRouter= createBrowserRouter([
   },
   {path:'/content',
     element: <Content/>
+  },
+  {path:'/orderform',
+    element: <OrderForm/>
   },
 ])
 
