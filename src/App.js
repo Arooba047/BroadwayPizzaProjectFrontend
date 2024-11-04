@@ -4,7 +4,7 @@ import Navbar from './Navbar/Navbar';
 import Logo from './Logo/Logo';
 import ImageSlider from './ImageSlider/ImageSlider';
 import Card from './Card/Card';
-import Button from './Buttons/Button';
+// import Button from './Buttons/Button';
 import NavbarSlider from './NavbarSlider/NavbarSlider';
 import LoginForm from './Login Form/LoginForm';
 import axios from 'axios';
@@ -34,7 +34,7 @@ function App() {
           <div className="col-11">
               <Logo />
             <ImageSlider />
-            <Button showactiveitem={showactiveitem}/>
+            {/* <Button showactiveitem={showactiveitem}/> */}
             <Card activeitem={activeitem} />
           </div>
         </div>

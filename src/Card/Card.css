@@ -1,3 +1,7 @@
+.searchbar input{
+  margin-top: 15px;
+}
+
 .cardrow {
     border-radius: 8px; /* Rounded corners */
     overflow: hidden;
